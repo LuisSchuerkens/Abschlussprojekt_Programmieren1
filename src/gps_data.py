@@ -164,6 +164,18 @@ def add_motion_data(gps_data: pd.DataFrame) -> pd.DataFrame:
     gps_data["slope_percent"] = gps_data["slope"] * 100
     gps_data["total_distance_m"] = gps_data["distance_m"].cumsum()
 
+    """
+    Begrenzung der Beschleunigung auf einen realistischen Bereich, um extreme Werte, die durch GPS-Messfehler entstehen können, zu vermeiden.
+    Rohdaten werden in einer separaten Spalte gespeichert, um die Originalwerte zu behalten.
+    """
+    max_acceleration = 3.0
+    min_acceleration = -3.0
+
+    gps_data["acceleration_m_s2_raw"] = gps_data["acceleration_m_s2"]
+    gps_data["acceleration_m_s2"] = gps_data["acceleration_m_s2"].clip(
+    lower=min_acceleration,
+    upper=max_acceleration
+)
     print("Bewegungsdaten wurden berechnet.")
     print(f"Gesamtstrecke: {gps_data['total_distance_m'].iloc[-1] / 1000:.2f} km")
     print(f"Maximale Geschwindigkeit: {gps_data['speed_km_h'].max():.2f} km/h")
