@@ -1,15 +1,15 @@
-from gps_data import load_gps_data
-
+import gps_data
 
 def main():
     """Hauptfunktion des Programms."""
     print("E-Bike Simulation gestartet.")
 
     file_path = "data/final_project_input_data.csv"
-    gps_data = load_gps_data(file_path)
+    route_data = gps_data.load_gps_data(file_path)
+    route_data = gps_data.add_motion_data(route_data)
 
     print("Kontrollausgabe der ersten fünf GPS-Datenpunkte:")
-    print(gps_data.head())
+    print(route_data.head())
 
 
 if __name__ == "__main__":
