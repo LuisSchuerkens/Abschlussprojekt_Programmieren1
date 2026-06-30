@@ -1,4 +1,5 @@
 import gps_data
+import vehicle
 
 def main():
     """Hauptfunktion des Programms."""
@@ -7,7 +8,10 @@ def main():
     file_path = "data/final_project_input_data.csv"
     route_data = gps_data.load_gps_data(file_path)
     route_data = gps_data.add_motion_data(route_data)
+    route_data = vehicle.add_vehicle_data(route_data)
 
+    print("Simulation abgeschlossen.")
+    
     print("Kontrollausgabe der ersten fünf GPS-Datenpunkte:")
     print(route_data.head())
 
