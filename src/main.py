@@ -68,5 +68,23 @@ def main():
     print(f"Minimale Spannung LiPo: {route_data['lipo_voltage_V'].min():.2f} V")
     print(f"Minimale Spannung NMC: {route_data['nmc_voltage_V'].min():.2f} V")
 
+    total_distance_km = route_data["total_distance_m"].iloc[-1] / 1000
+
+    total_time_s = (route_data["time"].iloc[-1] - route_data["time"].iloc[0]).total_seconds()
+    total_time_h = total_time_s / 3600
+
+    average_speed_km_h = total_distance_km / total_time_h
+
+    elevation_difference = route_data["ele"].diff()
+
+    elevation_gain_m = elevation_difference[elevation_difference > 0].sum()
+    elevation_loss_m = -elevation_difference[elevation_difference < 0].sum()
+
+    print("Zusammenfassung der gesamten Route:")
+    print(f"Durchschnittsgeschwindigkeit: {average_speed_km_h:.2f} km/h")
+    print(f"Benötigte Zeit: {total_time_h:.2f} h")
+    print(f"Höhenmeter Anstieg: {elevation_gain_m:.2f} m")
+    print(f"Höhenmeter Abstieg: {elevation_loss_m:.2f} m")
+    
 if __name__ == "__main__":
     main()
