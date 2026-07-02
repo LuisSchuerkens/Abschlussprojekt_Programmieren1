@@ -1,3 +1,5 @@
+import logging
+
 import battery_pack
 
 
@@ -19,6 +21,8 @@ class BatterySimulator:
         if len(current_profile) != len(duration_profile):
             raise ValueError("Current profile and duration profile must have the same length.")
 
+        logging.info("Akku-Simulation mit Stromprofil gestartet.")
+
         self.soc_profile = []
         self.voltage_profile = []
         self.current_profile = []
@@ -29,6 +33,8 @@ class BatterySimulator:
             self.current_profile.append(current)
             self.soc_profile.append(self.battery.soc)
             self.voltage_profile.append(self.battery.voltage(current))
+        
+        logging.info("Akku-Simulation mit Stromprofil abgeschlossen.")
 
     def simulate_power(self, power_profile: list[float], duration_profile: list[float]) -> None:
         """
@@ -39,6 +45,8 @@ class BatterySimulator:
         """
         if len(power_profile) != len(duration_profile):
             raise ValueError("Power profile and duration profile must have the same length.")
+
+        logging.info("Akku-Simulation mit Leistungsprofil gestartet.")
 
         self.soc_profile = []
         self.voltage_profile = []
@@ -57,3 +65,5 @@ class BatterySimulator:
             self.current_profile.append(current)
             self.soc_profile.append(self.battery.soc)
             self.voltage_profile.append(self.battery.voltage(current))
+        
+        logging.info("Akku-Simulation mit Leistungsprofil abgeschlossen.")        

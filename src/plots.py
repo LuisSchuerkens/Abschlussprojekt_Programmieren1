@@ -1,3 +1,5 @@
+import logging
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -85,5 +87,5 @@ def create_all_plots(route_data: pd.DataFrame) -> None:
     plot_height_profile(route_data)
 
 
-    print("Plots wurden erstellt.")
+    logging.info("Plots wurden erstellt.")
     plt.show()

@@ -1,13 +1,21 @@
+import logging
+
 import gps_data
 import vehicle
 import battery_pack
 import battery_simulator
 import plots
 
+logging.basicConfig(
+    format="%(asctime)s:%(levelname)s: %(message)s",
+    level=logging.INFO,
+    filename="app.log",
+    encoding="utf-8"
+)
 
 def main():
     """Hauptfunktion des Programms."""
-    print("E-Bike Simulation gestartet.")
+    logging.info("E-Bike Simulation gestartet.")
 
     file_path = "data/final_project_input_data.csv"
 
@@ -63,11 +71,11 @@ def main():
     route_data["nmc_voltage_V"] = nmc_simulator.voltage_profile
     route_data["nmc_current_A"] = nmc_simulator.current_profile
 
-    print("Akku-Simulation abgeschlossen.")
-    print(f"End-Ladezustand LiPo: {route_data['lipo_soc_percent'].iloc[-1]:.2f} %")
-    print(f"End-Ladezustand NMC: {route_data['nmc_soc_percent'].iloc[-1]:.2f} %")
-    print(f"Minimale Spannung LiPo: {route_data['lipo_voltage_V'].min():.2f} V")
-    print(f"Minimale Spannung NMC: {route_data['nmc_voltage_V'].min():.2f} V")
+    logging.info("Akku-Simulation abgeschlossen.")
+    logging.info(f"End-Ladezustand LiPo: {route_data['lipo_soc_percent'].iloc[-1]:.2f} %")
+    logging.info(f"End-Ladezustand NMC: {route_data['nmc_soc_percent'].iloc[-1]:.2f} %")
+    logging.info(f"Minimale Spannung LiPo: {route_data['lipo_voltage_V'].min():.2f} V")
+    logging.info(f"Minimale Spannung NMC: {route_data['nmc_voltage_V'].min():.2f} V")
 
     total_distance_km = route_data["total_distance_m"].iloc[-1] / 1000
 
@@ -81,11 +89,11 @@ def main():
     elevation_gain_m = elevation_difference[elevation_difference > 0].sum()
     elevation_loss_m = -elevation_difference[elevation_difference < 0].sum()
 
-    print("Zusammenfassung der gesamten Route:")
-    print(f"Durchschnittsgeschwindigkeit: {average_speed_km_h:.2f} km/h")
-    print(f"Benötigte Zeit: {total_time_h:.2f} h")
-    print(f"Höhenmeter Anstieg: {elevation_gain_m:.2f} m")
-    print(f"Höhenmeter Abstieg: {elevation_loss_m:.2f} m")
+    logging.info("Zusammenfassung der gesamten Route:")
+    logging.info(f"Durchschnittsgeschwindigkeit: {average_speed_km_h:.2f} km/h")
+    logging.info(f"Benötigte Zeit: {total_time_h:.2f} h")
+    logging.info(f"Höhenmeter Anstieg: {elevation_gain_m:.2f} m")
+    logging.info(f"Höhenmeter Abstieg: {elevation_loss_m:.2f} m")
     
     plots.create_all_plots(route_data)
 
