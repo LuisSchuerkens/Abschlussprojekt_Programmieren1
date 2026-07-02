@@ -2,6 +2,7 @@ import gps_data
 import vehicle
 import battery_pack
 import battery_simulator
+import plots
 
 
 def main():
@@ -85,6 +86,9 @@ def main():
     print(f"Benötigte Zeit: {total_time_h:.2f} h")
     print(f"Höhenmeter Anstieg: {elevation_gain_m:.2f} m")
     print(f"Höhenmeter Abstieg: {elevation_loss_m:.2f} m")
+    
+    plots.create_all_plots(route_data)
+
     
 if __name__ == "__main__":
     main()
