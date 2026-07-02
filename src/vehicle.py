@@ -1,3 +1,5 @@
+import logging
+
 import pandas as pd
 
 
@@ -56,8 +58,8 @@ def add_vehicle_data(gps_data: pd.DataFrame) -> pd.DataFrame:
     gps_data["torque_Nm"] = torque
     gps_data["motor_current_A"] = motor_current
 
-    print("Fahrzeugdaten wurden berechnet.")
-    print(f"Maximale Leistung: {gps_data['power_W'].max():.2f} W")
-    print(f"Maximaler Motorstrom: {gps_data['motor_current_A'].max():.2f} A")
+    logging.info("Fahrzeugdaten wurden berechnet.")
+    logging.info(f"Maximale Leistung: {gps_data['power_W'].max():.2f} W")
+    logging.info(f"Maximaler Motorstrom: {gps_data['motor_current_A'].max():.2f} A")
 
     return gps_data

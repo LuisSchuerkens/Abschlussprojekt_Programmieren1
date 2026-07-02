@@ -1,3 +1,5 @@
+import logging
+
 from pathlib import Path
 import math
 import pandas as pd
@@ -27,8 +29,8 @@ def load_gps_data(file_path: str) -> pd.DataFrame:
     gps_data.columns = gps_data.columns.str.strip()
     gps_data.columns = gps_data.columns.str.replace("\ufeff", "")
 
-    print("Erkannte Spalten:")
-    print(gps_data.columns.tolist())
+    logging.info("Erkannte Spalten:")
+    logging.info(gps_data.columns.tolist())
 
     required_columns = ["lat", "lon", "ele", "time", "temperature"]
 
@@ -49,10 +51,10 @@ def load_gps_data(file_path: str) -> pd.DataFrame:
     gps_data = gps_data.sort_values("time")
     gps_data = gps_data.reset_index(drop=True)
 
-    print("GPS-Daten wurden erfolgreich geladen.")
-    print(f"Anzahl der Datenpunkte: {len(gps_data)}")
-    print(f"Startzeit: {gps_data['time'].iloc[0]}")
-    print(f"Endzeit: {gps_data['time'].iloc[-1]}")
+    logging.info("GPS-Daten wurden erfolgreich geladen.")
+    logging.info(f"Anzahl der Datenpunkte: {len(gps_data)}")
+    logging.info(f"Startzeit: {gps_data['time'].iloc[0]}")
+    logging.info(f"Endzeit: {gps_data['time'].iloc[-1]}")
 
     return gps_data
 
@@ -176,9 +178,9 @@ def add_motion_data(gps_data: pd.DataFrame) -> pd.DataFrame:
     lower=min_acceleration,
     upper=max_acceleration
 )
-    print("Bewegungsdaten wurden berechnet.")
-    print(f"Gesamtstrecke: {gps_data['total_distance_m'].iloc[-1] / 1000:.2f} km")
-    print(f"Maximale Geschwindigkeit: {gps_data['speed_km_h'].max():.2f} km/h")
-    print(f"Maximale Steigung: {gps_data['slope_percent'].max():.2f} %")
+    logging.info("Bewegungsdaten wurden berechnet.")
+    logging.info(f"Gesamtstrecke: {gps_data['total_distance_m'].iloc[-1] / 1000:.2f} km")
+    logging.info(f"Maximale Geschwindigkeit: {gps_data['speed_km_h'].max():.2f} km/h")
+    logging.info(f"Maximale Steigung: {gps_data['slope_percent'].max():.2f} %")
 
     return gps_data
