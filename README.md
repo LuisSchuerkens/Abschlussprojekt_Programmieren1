@@ -59,11 +59,17 @@ Danach wird ein virtuelles Environment erstellt:
 python -m venv .venv
 ```
 
-Unter Windows wird das Environment so aktiviert:
+Unter Windows in Git Bash wird das Environment so aktiviert:
 
-```bash
+​```bash
+source .venv/Scripts/activate
+​```
+
+Unter Windows in PowerShell oder cmd:
+
+​```bash
 .venv\Scripts\activate
-```
+​```
 
 Anschließend werden die benötigten Pakete installiert:
 
