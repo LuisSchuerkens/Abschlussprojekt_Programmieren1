@@ -43,6 +43,10 @@ Die Akkus unterscheiden sich durch ihre Spannungskennlinien und ihren Innenwider
 ├── requirements.txt
 └── .gitignore
 ```
+## Aktivitätsdiagramm
+
+Der vollständige Ablauf der Simulation ist im Aktivitätsdiagramm in
+[activity_diagram.md](activity_diagram.md) dargestellt.
 
 ## Installation
 
