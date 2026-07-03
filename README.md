@@ -1,6 +1,4 @@
-# Abschlussprojekt_Programmieren1
-
-# E-Bike Simulation
+# Abschlussprojekt_Programmieren1 - E-Bike Simulation
 
 Dieses Projekt simuliert eine E-Bike-Fahrt auf Basis von GPS-Daten. Aus den GPS-Daten werden Bewegungsdaten, Fahrzeugdaten, Leistungswerte und Akkudaten berechnet. Zusätzlich werden verschiedene Diagramme zur Auswertung der Route und der Akku-Simulation erstellt.
 
@@ -105,7 +103,7 @@ Diese Daten werden eingelesen, zeitlich sortiert und anschließend für die Simu
 
 Aus den GPS-Daten werden die Distanzen zwischen den einzelnen Punkten berechnet. Daraus ergeben sich Geschwindigkeit, Beschleunigung und Steigung.
 
-Da GPS-Daten einzelne Ausreißer enthalten können, wird die berechnete Beschleunigung für die weitere Simulation auf einen plausiblen Bereich begrenzt (-3 - +3 m/s^2). Der ursprüngliche Rohwert bleibt zusätzlich erhalten.
+Da GPS-Daten einzelne Ausreißer enthalten können, wird die berechnete Beschleunigung für die weitere Simulation auf einen plausiblen Bereich begrenzt (von `-3 m/s^2` bis `+3 m/s^2`). Der ursprüngliche Rohwert bleibt zusätzlich erhalten.
 
 ### Fahrzeugmodell
 
@@ -132,15 +130,25 @@ Der Akku-Strom wird aus der benötigten Leistung und der aktuellen Akkuspannung 
 
 #### Verwendete Akkukapazität
 
-Zunächst wurde das Modell mit einer Akkukapazität von `10 Ah` getestet. Diese Kapazität reichte für die simulierte Route jedoch nicht aus, da der Ladezustand am Ende der Fahrt auf `0 %` fiel. Aus dem Leistungsprofil der Route ergab sich ein rechnerischer Kapazitätsbedarf von ungefähr `30,86 Ah`.
+Für die finale Simulation wurde für beide Akkutypen eine Akkukapazität von `35 Ah` verwendet.
 
-Daher wurde für die weitere Simulation eine Akkukapazität von `35 Ah` gewählt. Dadurch bleibt eine Reserve erhalten und die Entwicklung des Ladezustands über die gesamte Fahrt kann sinnvoll dargestellt werden.
+Zunächst wurde das Modell mit einer Akkukapazität von `10 Ah` getestet. Diese Kapazität reichte für die simulierte Route jedoch nicht aus, da der Ladezustand am Ende der Fahrt auf `0 %` fiel.
 
-Dass die Ladezustände am Ende der Fahr unterschiedlich sind ist plausibel, da die beiden Akkus zwar gleiche Startwerte und gleiche Kapazität haben, aber unterschiedliche Kennlinien.
+Für die weitere Simulation wurde daher eine größere Akkukapazität von `35 Ah` gewählt. Dadurch bleibt bei beiden Akkutypen eine ausreichende Reserve erhalten und die Entwicklung des Ladezustands über die gesamte Fahrt kann sinnvoll dargestellt werden.
 
-## Ausgabe
+Die beiden simulierten Akkutypen LiPo und NMC verwenden dieselbe Kapazität und denselben Start-Ladezustand, unterscheiden sich jedoch durch ihre Spannungskennlinien und ihren Innenwiderstand. Dadurch ergeben sich unterschiedliche Spannungs- und Ladezustandsverläufe.
 
-Beim Ausführen des Programms werden zentrale Kennwerte im Terminal ausgegeben:
+## Logging
+
+Das Projekt verwendet das Python-Modul `logging`, um wichtige Programmschritte zu protokollieren. Die Log-Ausgaben werden in der Datei `app.log` gespeichert.
+
+Die Log-Datei wird nicht versioniert, da sie bei jeder Ausführung neu erzeugt wird. Deshalb werden Log-Dateien über `.gitignore` ausgeschlossen:
+
+```text
+*.log
+```
+
+Beim Ausführen des Programms werden zentrale Kennwerte in die log-Datei geschrieben:
 
 * Gesamtstrecke
 * maximale Geschwindigkeit
