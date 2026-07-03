@@ -5,6 +5,7 @@ import vehicle
 import battery_pack
 import battery_simulator
 import plots
+from pathlib import Path 
 
 logging.basicConfig(
     format="%(asctime)s:%(levelname)s: %(message)s",
@@ -95,7 +96,8 @@ def main():
     logging.info(f"Höhenmeter Anstieg: {elevation_gain_m:.2f} m")
     logging.info(f"Höhenmeter Abstieg: {elevation_loss_m:.2f} m")
     
-    plots.create_all_plots(route_data)
+    results_dir = Path(__file__).resolve().parent.parent / "results"
+    plots.create_all_plots(route_data, str(results_dir))
 
     
 if __name__ == "__main__":

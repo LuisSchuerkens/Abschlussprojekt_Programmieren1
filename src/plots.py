@@ -1,10 +1,11 @@
 import logging
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def plot_speed_profile(route_data: pd.DataFrame) -> None:
+def plot_speed_profile(route_data: pd.DataFrame, output_path: str = None) -> None:
     """
     Erstellt ein Geschwindigkeitsprofil über der Strecke.
     """
@@ -17,8 +18,11 @@ def plot_speed_profile(route_data: pd.DataFrame) -> None:
     plt.ylabel("Geschwindigkeit in km/h")
     plt.grid(True)
 
+    if output_path is not None:
+        plt.savefig(output_path)
 
-def plot_power_profile(route_data: pd.DataFrame) -> None:
+
+def plot_power_profile(route_data: pd.DataFrame, output_path: str = None) -> None:
     """
     Erstellt ein Leistungsprofil über der Strecke.
     """
@@ -31,8 +35,11 @@ def plot_power_profile(route_data: pd.DataFrame) -> None:
     plt.ylabel("Leistung in W")
     plt.grid(True)
 
+    if output_path is not None:
+        plt.savefig(output_path)
 
-def plot_battery_soc(route_data: pd.DataFrame) -> None:
+
+def plot_battery_soc(route_data: pd.DataFrame, output_path: str = None) -> None:
     """
     Erstellt einen Vergleich des Ladezustands von LiPo und NMC.
     """
@@ -47,8 +54,11 @@ def plot_battery_soc(route_data: pd.DataFrame) -> None:
     plt.grid(True)
     plt.legend()
 
+    if output_path is not None:
+        plt.savefig(output_path)
 
-def plot_battery_voltage(route_data: pd.DataFrame) -> None:
+
+def plot_battery_voltage(route_data: pd.DataFrame, output_path: str = None) -> None:
     """
     Erstellt einen Vergleich der Akkuspannung von LiPo und NMC.
     """
@@ -63,7 +73,11 @@ def plot_battery_voltage(route_data: pd.DataFrame) -> None:
     plt.grid(True)
     plt.legend()
 
-def plot_height_profile(route_data: pd.DataFrame) -> None:
+    if output_path is not None:
+        plt.savefig(output_path)
+
+
+def plot_height_profile(route_data: pd.DataFrame, output_path: str = None) -> None:
     """
     Erstellt ein Höhenprofil über der Strecke.
     """
@@ -76,16 +90,23 @@ def plot_height_profile(route_data: pd.DataFrame) -> None:
     plt.ylabel("Höhe in m")
     plt.grid(True)
 
-def create_all_plots(route_data: pd.DataFrame) -> None:
-    """
-    Erstellt alle Diagramme für die E-Bike-Simulation.
-    """
-    plot_speed_profile(route_data)
-    plot_power_profile(route_data)
-    plot_battery_soc(route_data)
-    plot_battery_voltage(route_data)
-    plot_height_profile(route_data)
+    if output_path is not None:
+        plt.savefig(output_path)
 
 
-    logging.info("Plots wurden erstellt.")
+def create_all_plots(route_data: pd.DataFrame, output_dir: str = "results") -> None:
+    """
+    Erstellt alle Diagramme für die E-Bike-Simulation und speichert sie als PNG.
+    """
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    plot_speed_profile(route_data, str(output_path / "geschwindigkeit.png"))
+    plot_power_profile(route_data, str(output_path / "leistung.png"))
+    plot_battery_soc(route_data, str(output_path / "akku_soc.png"))
+    plot_battery_voltage(route_data, str(output_path / "akku_spannung.png"))
+    plot_height_profile(route_data, str(output_path / "hoehenprofil.png"))
+
+    logging.info(f"Plots wurden erstellt und in '{output_dir}' gespeichert.")
     plt.show()
+    
