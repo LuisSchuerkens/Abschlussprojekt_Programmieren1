@@ -48,6 +48,11 @@ Die Akkus unterscheiden sich durch ihre Spannungskennlinien und ihren Innenwider
 Der vollständige Ablauf der Simulation ist im Aktivitätsdiagramm in
 [activity_diagram.md](activity_diagram.md) dargestellt.
 
+## UML-Klassendiagramm
+
+Die objektorientierte Struktur der Akku-Simulation ist im UML-Klassendiagramm in
+[uml_class_diagram.md](uml_class_diagram.md) dargestellt.
+
 ## Installation
 
 Zuerst muss das Repository lokal geklont werden:
