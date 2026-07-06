@@ -8,7 +8,7 @@ class BatterySimulator:
     Simuliert einen Akku über ein Leistungsprofil.
     """
 
-    def __init__(self, battery: battery_pack.BatteryPack) -> None:
+    def __init__(self, battery: battery_pack.BatteryBase) -> None:
         self.battery = battery
         self.soc_profile = []
         self.voltage_profile = []
