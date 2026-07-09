@@ -183,6 +183,7 @@ Zusätzlich werden Diagramme erzeugt und angezeigt (jeweils in Abhängigkeit der
 * Leistungsprofil
 * Ladezustand der Akkus
 * Akkuspannung der Akkus
+* interaktive Routenkarte (results/route_karte.html, im Browser zu öffnen)
 
 ## Verwendete Pakete
 
