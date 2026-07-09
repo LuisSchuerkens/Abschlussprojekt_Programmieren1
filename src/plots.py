@@ -3,6 +3,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import folium
 
 
 def plot_speed_profile(route_data: pd.DataFrame, output_path: str = None) -> None:
@@ -120,6 +121,25 @@ def plot_height_profile_with_slope(route_data: pd.DataFrame, output_path: str = 
     if output_path is not None:
         plt.savefig(output_path)
 
+def create_route_map(route_data: pd.DataFrame, output_path: str) -> None:
+    """
+    Erstellt eine interaktive Karte der Route mit folium.
+    Die Karte wird als HTML-Datei gespeichert und kann im Browser geöffnet werden.
+    """
+    coordinates = list(zip(route_data["lat"], route_data["lon"]))
+
+    center_lat = route_data["lat"].mean()
+    center_lon = route_data["lon"].mean()
+
+    route_map = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+
+    folium.PolyLine(coordinates, color="blue", weight=3).add_to(route_map)
+    folium.Marker(coordinates[0], popup="Start", icon=folium.Icon(color="green")).add_to(route_map)
+    folium.Marker(coordinates[-1], popup="Ziel", icon=folium.Icon(color="red")).add_to(route_map)
+
+    route_map.save(output_path)
+    logging.info(f"Routenkarte wurde gespeichert: {output_path}")
+
 
 def create_all_plots(route_data: pd.DataFrame, output_dir: str = "results") -> None:
     """
@@ -134,6 +154,7 @@ def create_all_plots(route_data: pd.DataFrame, output_dir: str = "results") -> N
     plot_battery_voltage(route_data, str(output_path / "akku_spannung.png"))
     plot_height_profile(route_data, str(output_path / "hoehenprofil.png"))
     plot_height_profile_with_slope(route_data, str(output_path / "hoehenprofil_steigung.png"))
+    create_route_map(route_data, str(output_path / "route_karte.html"))
 
     logging.info(f"Plots wurden erstellt und in '{output_dir}' gespeichert.")
     plt.show()
