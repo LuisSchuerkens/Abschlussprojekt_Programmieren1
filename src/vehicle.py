@@ -2,8 +2,7 @@ import logging
 
 import pandas as pd
 
-
-def add_vehicle_data(gps_data: pd.DataFrame) -> pd.DataFrame:
+def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0) -> pd.DataFrame:
     """
     Berechnet Fahrzeugkraft, Leistung, Drehmoment und Motorstrom.
 
@@ -19,7 +18,6 @@ def add_vehicle_data(gps_data: pd.DataFrame) -> pd.DataFrame:
     """
     gps_data = gps_data.copy()
 
-    rider_mass = 70.0
     bike_mass = 10.0
     total_mass = rider_mass + bike_mass
 
