@@ -94,6 +94,33 @@ def plot_height_profile(route_data: pd.DataFrame, output_path: str = None) -> No
         plt.savefig(output_path)
 
 
+def plot_height_profile_with_slope(route_data: pd.DataFrame, output_path: str = None) -> None:
+    """
+    Erstellt ein Höhenprofil, bei dem die Punkte nach Steigung eingefärbt sind.
+    Rot bedeutet bergauf, blau bedeutet bergab.
+    """
+    distance_km = route_data["total_distance_m"] / 1000
+
+    plt.figure()
+    scatter = plt.scatter(
+        distance_km,
+        route_data["ele"],
+        c=route_data["slope_percent"],
+        cmap="coolwarm",
+        vmin=-10,
+        vmax=10,
+        s=4,
+    )
+    plt.colorbar(scatter, label="Steigung in %")
+    plt.title("Höhenprofil mit Steigung")
+    plt.xlabel("Strecke in km")
+    plt.ylabel("Höhe in m")
+    plt.grid(True)
+
+    if output_path is not None:
+        plt.savefig(output_path)
+
+
 def create_all_plots(route_data: pd.DataFrame, output_dir: str = "results") -> None:
     """
     Erstellt alle Diagramme für die E-Bike-Simulation und speichert sie als PNG.
@@ -106,7 +133,7 @@ def create_all_plots(route_data: pd.DataFrame, output_dir: str = "results") -> N
     plot_battery_soc(route_data, str(output_path / "akku_soc.png"))
     plot_battery_voltage(route_data, str(output_path / "akku_spannung.png"))
     plot_height_profile(route_data, str(output_path / "hoehenprofil.png"))
+    plot_height_profile_with_slope(route_data, str(output_path / "hoehenprofil_steigung.png"))
 
     logging.info(f"Plots wurden erstellt und in '{output_dir}' gespeichert.")
     plt.show()
-    
