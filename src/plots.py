@@ -158,3 +158,21 @@ def create_all_plots(route_data: pd.DataFrame, output_dir: str = "results") -> N
 
     logging.info(f"Plots wurden erstellt und in '{output_dir}' gespeichert.")
     plt.show()
+
+def plot_mass_study(distance_km, results: dict, output_path: str = None) -> None:
+    """
+    Vergleicht die SOC-Verläufe für verschiedene Fahrermassen.
+    results ist ein Dictionary: Fahrermasse -> SOC-Verlauf
+    """
+    plt.figure()
+    for mass, soc_profile in results.items():
+        soc_percent = [soc * 100 for soc in soc_profile]
+        plt.plot(distance_km, soc_percent, label=f"{mass:.0f} kg")
+    plt.title("Ladezustand bei verschiedenen Fahrermassen (LiPo)")
+    plt.xlabel("Strecke in km")
+    plt.ylabel("Ladezustand in %")
+    plt.grid(True)
+    plt.legend(title="Fahrermasse")
+
+    if output_path is not None:
+        plt.savefig(output_path)

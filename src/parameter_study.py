@@ -5,6 +5,10 @@ import vehicle
 import battery_pack
 import battery_simulator
 
+import plots
+from pathlib import Path
+import matplotlib.pyplot as plt
+
 logging.basicConfig(
     format="%(asctime)s:%(levelname)s: %(message)s",
     level=logging.INFO,
@@ -41,14 +45,25 @@ def run_mass_study(file_path: str, rider_masses: list[float]) -> dict:
 
 def main():
     logging.info("Parameterstudie gestartet.")
-
     file_path = "data/final_project_input_data.csv"
     rider_masses = [60.0, 70.0, 85.0]
+    route_data = gps_data.load_gps_data(file_path)
+    route_data = gps_data.add_motion_data(route_data)
+    distance_km = route_data["total_distance_m"] / 1000
+    results = run_mass_study(file_path, rider_masses)
 
-    run_mass_study(file_path, rider_masses)
+    results_dir = Path(__file__).resolve().parent.parent / "results"
+    results_dir.mkdir(exist_ok=True)
+
+    plots.plot_mass_study(
+        distance_km,
+        results,
+        str(results_dir / "parameterstudie_masse.png")
+    )
+
+    plt.show()
 
     logging.info("Parameterstudie abgeschlossen.")
-
 
 if __name__ == "__main__":
     main()
