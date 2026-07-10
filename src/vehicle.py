@@ -2,6 +2,20 @@ import logging
 
 import pandas as pd
 
+def calculate_air_density(elevation, temperature_celsius):
+    """
+    Berechnet die Luftdichte aus Höhe und Temperatur.
+    Der Luftdruck wird mit der barometrischen Höhenformel bestimmt,
+    die Dichte über die ideale Gasgleichung.
+    """
+    pressure_sea_level = 101325.0
+    specific_gas_constant = 287.05
+
+    temperature_kelvin = temperature_celsius + 273.15
+    pressure = pressure_sea_level * (1 - 0.0065 * elevation / 288.15) ** 5.255
+
+    return pressure / (specific_gas_constant * temperature_kelvin)
+
 def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0) -> pd.DataFrame:
     """
     Berechnet Fahrzeugkraft, Leistung, Drehmoment und Motorstrom.
@@ -22,7 +36,7 @@ def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0) -> pd.Dat
     total_mass = rider_mass + bike_mass
 
     gravity = 9.81
-    air_density = 1.23
+    air_density = calculate_air_density(gps_data["ele"], gps_data["temperature"])
     cw_a = 0.5625
 
     wheel_diameter_inch = 27.0
