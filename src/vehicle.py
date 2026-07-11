@@ -1,6 +1,7 @@
 import logging
 
 import pandas as pd
+import numpy as np
 
 def calculate_air_density(elevation, temperature_celsius):
     """
@@ -50,9 +51,11 @@ def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0, cw_a: flo
 
     air_force = 0.5 * air_density * cw_a * speed ** 2
     slope_force = total_mass * gravity * slope
+    rolling_coefficient = 0.008
+    rolling_force = rolling_coefficient * total_mass * gravity * np.cos(np.arctan(slope))
     acceleration_force = total_mass * acceleration
 
-    total_force = air_force + slope_force + acceleration_force
+    total_force = air_force + slope_force + acceleration_force + rolling_force
 
     # Für die minimal Anforderungen (ohne Erweiterung) setzen wir minimale Antriebskraft auf 0.
     total_force = total_force.clip(lower=0)
