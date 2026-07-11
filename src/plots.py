@@ -176,3 +176,21 @@ def plot_mass_study(distance_km, results: dict, output_path: str = None) -> None
 
     if output_path is not None:
         plt.savefig(output_path)
+    
+def plot_cwa_study(distance_km, results: dict, output_path: str = None) -> None:
+    """
+    Vergleicht die SOC-Verläufe für verschiedene Luftwiderstandsbeiwerte.
+    results ist ein Dictionary: cW*A-Wert -> SOC-Verlauf
+    """
+    plt.figure()
+    for cw_a, soc_profile in results.items():
+        soc_percent = [soc * 100 for soc in soc_profile]
+        plt.plot(distance_km, soc_percent, label=f"cW*A = {cw_a}")
+    plt.title("Ladezustand bei verschiedenen Luftwiderstandsbeiwerten (LiPo)")
+    plt.xlabel("Strecke in km")
+    plt.ylabel("Ladezustand in %")
+    plt.grid(True)
+    plt.legend(title="cW*A")
+
+    if output_path is not None:
+        plt.savefig(output_path)
