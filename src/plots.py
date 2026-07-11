@@ -4,6 +4,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 import folium
+import geocoding
 
 
 def plot_speed_profile(route_data: pd.DataFrame, output_path: str = None) -> None:
@@ -124,6 +125,7 @@ def plot_height_profile_with_slope(route_data: pd.DataFrame, output_path: str = 
 def create_route_map(route_data: pd.DataFrame, output_path: str) -> None:
     """
     Erstellt eine interaktive Karte der Route mit folium.
+    Die markanten Punkte werden über Reverse Geocoding beschriftet.
     Die Karte wird als HTML-Datei gespeichert und kann im Browser geöffnet werden.
     """
     coordinates = list(zip(route_data["lat"], route_data["lon"]))
@@ -132,12 +134,34 @@ def create_route_map(route_data: pd.DataFrame, output_path: str) -> None:
     center_lon = route_data["lon"].mean()
 
     route_map = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-
     folium.PolyLine(coordinates, color="blue", weight=3).add_to(route_map)
-    folium.Marker(coordinates[0], popup="Start", icon=folium.Icon(color="green")).add_to(route_map)
-    folium.Marker(coordinates[-1], popup="Ziel", icon=folium.Icon(color="red")).add_to(route_map)
+
+    highest_index = route_data["ele"].idxmax()
+
+    start_location = geocoding.reverse_geocode(route_data["lat"].iloc[0], route_data["lon"].iloc[0])
+    end_location = geocoding.reverse_geocode(route_data["lat"].iloc[-1], route_data["lon"].iloc[-1])
+    highest_location = geocoding.reverse_geocode(
+        route_data["lat"].iloc[highest_index], route_data["lon"].iloc[highest_index]
+    )
+
+    start_name = start_location.split(",")[0]
+    end_name = end_location.split(",")[0]
+    highest_name = highest_location.split(",")[0]
+
+    folium.Marker(
+        coordinates[0],
+        popup=f"Start / Ziel (Rundkurs): {start_name}",
+        icon=folium.Icon(color="green"),
+    ).add_to(route_map)
+
+    folium.Marker(
+        coordinates[highest_index],
+        popup=f"Hoechster Punkt: {highest_name}",
+        icon=folium.Icon(color="orange"),
+    ).add_to(route_map)
 
     route_map.save(output_path)
+    logging.info(f"Routenkarte wurde gespeichert: {output_path}")
     logging.info(f"Routenkarte wurde gespeichert: {output_path}")
 
 
