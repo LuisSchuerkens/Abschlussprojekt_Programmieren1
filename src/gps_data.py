@@ -98,6 +98,30 @@ def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
 
     return distance
 
+def calculate_bearing(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """
+    Berechnet den Kurswinkel (Himmelsrichtung) zwischen zwei GPS-Punkten in Grad.
+    0 Grad ist Norden, 90 Grad ist Osten.
+    """
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_lon = math.radians(lon2 - lon1)
+
+    x = math.sin(delta_lon) * math.cos(phi2)
+    y = math.cos(phi1) * math.sin(phi2) - math.sin(phi1) * math.cos(phi2) * math.cos(delta_lon)
+
+    bearing = math.degrees(math.atan2(x, y))
+    return (bearing + 360) % 360
+
+
+def bearing_to_compass(bearing: float) -> str:
+    """
+    Wandelt einen Kurswinkel in eine der acht Himmelsrichtungen um.
+    """
+    directions = ["N", "NO", "O", "SO", "S", "SW", "W", "NW"]
+    index = round(bearing / 45) % 8
+    return directions[index]
+
 
 def add_motion_data(gps_data: pd.DataFrame) -> pd.DataFrame:
     """
@@ -121,6 +145,7 @@ def add_motion_data(gps_data: pd.DataFrame) -> pd.DataFrame:
     speeds = [0.0]
     accelerations = [0.0]
     slopes = [0.0]
+    bearings = [0.0]
 
     for i in range(1, len(gps_data)):
         lat1 = gps_data.loc[i - 1, "lat"]
@@ -155,6 +180,9 @@ def add_motion_data(gps_data: pd.DataFrame) -> pd.DataFrame:
         else:
             slope = 0.0
 
+        bearing = calculate_bearing(lat1, lon1, lat2, lon2)
+        bearings.append(bearing)
+
         slopes.append(slope)
 
     gps_data["distance_m"] = distances
@@ -165,7 +193,9 @@ def add_motion_data(gps_data: pd.DataFrame) -> pd.DataFrame:
     gps_data["slope"] = slopes
     gps_data["slope_percent"] = gps_data["slope"] * 100
     gps_data["total_distance_m"] = gps_data["distance_m"].cumsum()
-
+    gps_data["bearing"] = bearings
+    gps_data["compass"] = [bearing_to_compass(b) for b in bearings]
+    
     """
     Begrenzung der Beschleunigung auf einen realistischen Bereich, um extreme Werte, die durch GPS-Messfehler entstehen können, zu vermeiden.
     Rohdaten werden in einer separaten Spalte gespeichert, um die Originalwerte zu behalten.
