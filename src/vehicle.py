@@ -16,7 +16,7 @@ def calculate_air_density(elevation, temperature_celsius):
 
     return pressure / (specific_gas_constant * temperature_kelvin)
 
-def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0) -> pd.DataFrame:
+def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0, cw_a: float = 0.5625) -> pd.DataFrame:
     """
     Berechnet Fahrzeugkraft, Leistung, Drehmoment und Motorstrom.
 
@@ -37,7 +37,6 @@ def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0) -> pd.Dat
 
     gravity = 9.81
     air_density = calculate_air_density(gps_data["ele"], gps_data["temperature"])
-    cw_a = 0.5625
 
     wheel_diameter_inch = 27.0
     inch_to_meter = 0.0254
