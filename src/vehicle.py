@@ -57,6 +57,8 @@ def add_vehicle_data(gps_data: pd.DataFrame, rider_mass: float = 70.0, cw_a: flo
 
     total_force = air_force + slope_force + acceleration_force + rolling_force
 
+    gps_data["power_raw_W"] = total_force * speed
+    
     # Für die minimal Anforderungen (ohne Erweiterung) setzen wir minimale Antriebskraft auf 0.
     total_force = total_force.clip(lower=0)
 
