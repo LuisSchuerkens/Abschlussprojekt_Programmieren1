@@ -359,19 +359,70 @@ berechnet und einer der acht Himmelsrichtungen (N, NO, O, SO, S, SW, W, NW)
 zugeordnet. Die Werte stehen in den Spalten `bearing` und `compass` und werden
 für die Windberechnung verwendet.
 
-## Verwendete Pakete
+## Verwendete Annahmen
 
-Die benötigten Python-Pakete sind in `requirements.txt` gespeichert:
+Nicht alle Modellparameter sind in der Aufgabenstellung vorgegeben. Für die
+Erweiterungen wurden folgende Werte als begründete Annahmen gewählt und im
+Code als Konstanten hinterlegt:
 
-* `pandas` - Datenstrukturen und Auswertung
-* `matplotlib` - Diagramme
-* `numpy` - Interpolation der Akku-Kennlinien
-* `folium` - Routenkarte
+## Verwendete Annahmen
+
+Einige Parameter der Erweiterungen sind in der Aufgabenstellung nicht vorgegeben und wurden daher selbst gewählt:
+
+ Parameter | Wert 
+ Rollwiderstandsbeiwert `c_rr`  0.008 
+ Wärmekapazität / Kühlkoeffizient des Akkus | 1200 J/K / 0.8 W/K 
+ Umgebungstemperatur | 28 °C 
+ Maximaler Ladestrom (Rekuperation) | 10 A 
+ Akkukapazität | 35 Ah 
+ Parameterstudien | 60/70/85 kg, cW*A 0.4/0.5625/0.7 
+
+Für den fiktiven Akku liegt kein Datenblatt vor, daher sind die thermischen
+Werte und der Ladestrom vereinfachte Annahmen. Die Erweiterungen zeigen deshalb
+qualitative Tendenzen, keine exakten Vorhersagen.
 
 ## Quellen
 
-* Kursunterlagen MCI-MECH-B-2-PRO1 (Vorlesungsfolien und Übungen)
-* Dokumentation der verwendeten Pakete: pandas, matplotlib, numpy, folium
-* Haversine-Formel: Kursunterlagen zum Abschlussprojekt
-* Nominatim (OpenStreetMap) für das Reverse Geocoding: https://nominatim.org
-* Open-Meteo für die historischen Wetterdaten: https://open-meteo.com
+### Aufgabenstellung und Kursunterlagen
+
+* MCI-MECH-B-2-PRO1-PRO1-ILV, Foliensatz "Abschlussprojekt SS 2026":
+  Haversine-Formel zur Streckenberechnung, Freikörperdiagramm und
+  Luftwiderstandskraft, Zusammenhang von Antriebskraft, Drehmoment und
+  Motorstrom, alle Fahrzeugparameter (Massen, cW*A, Raddurchmesser,
+  Motorkonstante), Aufbau und OCV-Kennlinien der beiden Akkutypen sowie Foliensätze zur objektorientierten Programmierung, Aufbau des UML- und Klassendiagramm und zu git
+
+### Physikalische Standardformeln
+
+Standardformeln aus der Physik/Thermodynamik :
+
+* Barometrische Höhenformel zur Bestimmung des Luftdrucks über der Höhe,
+  in der Form der ISA-Normatmosphäre (ICAO-Standardatmosphäre) mit
+  Temperaturgradient 0.0065 K/m und Bezugstemperatur 288.15 K
+* Ideale Gasgleichung in der Form rho = p / (R_s * T) mit der spezifischen
+  Gaskonstante für trockene Luft R_s = 287.05 J/(kg*K)
+* Rollwiderstandskraft F_roll = c_rr * m * g * cos(phi)
+* Joulesche Wärme Q = I^2 * R * t für die Verlustleistung im Innenwiderstand
+* Newtonsches Abkühlungsgesetz für die Wärmeabgabe an die Umgebung
+* Berechnung des Kurswinkels (Bearing) zwischen zwei Punkten auf der
+  Kugeloberfläche mittels sphärischer Trigonometrie
+
+### Verwendete APIs
+
+* Nominatim (OpenStreetMap) für das Reverse Geocoding:
+  https://nominatim.openstreetmap.org — 
+* Open-Meteo Archiv-API für die historischen Wetterdaten des Fahrttages:
+  https://archive-api.open-meteo.com
+
+### Verwendete Pakete und deren Dokumentation
+
+* pandas: https://pandas.pydata.org/docs/
+* matplotlib: https://matplotlib.org/stable/
+* numpy: https://numpy.org/doc/
+* folium: https://python-visualization.github.io/folium/
+* unittest (Python-Standardbibliothek): https://docs.python.org/3/library/unittest.html
+
+### Werkzeuge
+
+* Diagramme (Aktivitäts- und Klassendiagramm) erstellt mit Mermaid:
+  https://mermaid.js.org
+* Conventional Commits: https://www.conventionalcommits.org
