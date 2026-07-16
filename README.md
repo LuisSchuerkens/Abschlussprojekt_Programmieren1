@@ -123,9 +123,7 @@ python src/geocoding.py
 python src/weather.py
 ```
 
-Die Skripte `geocoding.py` und `weather.py` benötigen eine Internetverbindung. Sie sind
-so umgesetzt, dass sie ohne Internet nicht abstürzen, sondern eine entsprechende
-Meldung ausgeben. Die Hauptsimulation `main.py` läuft immer ohne Internetverbindung.
+Die Skripte `geocoding.py` und `weather.py` benötigen eine Internetverbindung. Sie sind so umgesetzt, dass sie ohne Internet nicht abstürzen, sondern eine entsprechende Meldung ausgeben. Die Hauptsimulation `main.py` läuft immer ohne Internetverbindung.
 
 ## Eingabedaten
 
@@ -231,10 +229,10 @@ Beim Ausführen des Programms werden zentrale Kennwerte in die log-Datei geschri
 
 Die Simulation ist an mehreren Stellen gegen ungültige Werte abgesichert:
 
-* Der Ladezustand kann nicht unter `0 %` oder über `100 %` fallen.
-* Eine Akkukapazität von `0` oder kleiner wird abgelehnt.
-* Negative Zeitschritte werden abgelehnt.
-* Fehlende oder ungültige Werte in der CSV-Datei führen zu einer aussagekräftigen Fehlermeldung.
+* Der Ladezustand kann nicht unter `0 %` fallen oder über `100 %` steigen
+* Eine Akkukapazität von `0` oder kleiner wird abgelehnt
+* Negative Zeitschritte werden abgelehnt
+* Fehlende oder ungültige Werte in der CSV-Datei führen zu einer Fehlermeldung
 * Zeitschritte von `0` werden abgefangen, damit es keine Division durch null gibt.
 * Die API-Aufrufe (Geocoding, Wetterdaten) sind mit `try/except` abgesichert.
 
