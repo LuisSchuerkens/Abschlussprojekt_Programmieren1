@@ -32,26 +32,37 @@ Die Akkus unterscheiden sich durch ihre Spannungskennlinien und ihren Innenwider
 ├── data/
 │   └── final_project_input_data.csv
 ├── src/
-│   ├── main.py
-│   ├── gps_data.py
-│   ├── vehicle.py
-│   ├── battery_pack.py
-│   ├── battery_simulator.py
-│   └── plots.py
+│   ├── main.py                    # Hauptsimulation
+│   ├── gps_data.py                # GPS-Daten einlesen und auswerten
+│   ├── vehicle.py                 # Fahrzeugmodell (Kräfte, Leistung, Motorstrom)
+│   ├── battery_pack.py            # Akku-Klassen (BatteryBase, LipoBattery, NmcBattery)
+│   ├── battery_simulator.py       # Simulation des Ladezustands
+│   ├── plots.py                   # Diagramme und Routenkarte
+│   ├── parameter_study.py         # Parameterstudien
+│   ├── battery_temperature.py     # Simulation der Akkutemperatur
+│   ├── brake_resistance.py        # Simulation des Bremswiderstands
+│   ├── geocoding.py               # Reverse Geocoding der Route
+│   └── weather.py                 # Wetterdaten und Windeinfluss
 ├── tests/
+│   ├── test_battery.py
+│   └── test_gps_data.py
+├── results/                       # erzeugte Diagramme und Karte
+├── activity_diagramm.md
+├── uml_class_diagramm.md
 ├── README.md
 ├── requirements.txt
 └── .gitignore
 ```
+
 ## Aktivitätsdiagramm
 
 Der vollständige Ablauf der Simulation ist im Aktivitätsdiagramm in
-[activity_diagram.md](activity_diagram.md) dargestellt.
+[activity_diagramm.md](activity_diagramm.md) dargestellt.
 
 ## UML-Klassendiagramm
 
 Die objektorientierte Struktur der Akku-Simulation ist im UML-Klassendiagramm in
-[uml_class_diagram.md](uml_class_diagram.md) dargestellt.
+[uml_class_diagramm.md](uml_class_diagramm.md) dargestellt.
 
 ## Installation
 
@@ -70,15 +81,15 @@ python -m venv .venv
 
 Unter Windows in Git Bash wird das Environment so aktiviert:
 
-​```bash
+```bash
 source .venv/Scripts/activate
-​```
+```
 
 Unter Windows in PowerShell oder cmd:
 
-​```bash
+```bash
 .venv\Scripts\activate
-​```
+```
 
 Anschließend werden die benötigten Pakete installiert:
 
@@ -102,6 +113,20 @@ data/final_project_input_data.csv
 
 vorhanden ist.
 
+Zusätzlich zur Hauptsimulation können die Erweiterungen einzeln ausgeführt werden:
+
+```bash
+python src/parameter_study.py
+python src/battery_temperature.py
+python src/brake_resistance.py
+python src/geocoding.py
+python src/weather.py
+```
+
+Die Skripte `geocoding.py` und `weather.py` benötigen eine Internetverbindung. Sie sind
+so umgesetzt, dass sie ohne Internet nicht abstürzen, sondern eine entsprechende
+Meldung ausgeben. Die Hauptsimulation `main.py` läuft immer ohne Internetverbindung.
+
 ## Eingabedaten
 
 Die CSV-Datei enthält GPS-Daten mit folgenden Spalten:
@@ -116,13 +141,21 @@ Diese Daten werden eingelesen, zeitlich sortiert und anschließend für die Simu
 
 ### GPS- und Bewegungsdaten
 
-Aus den GPS-Daten werden die Distanzen zwischen den einzelnen Punkten berechnet. Daraus ergeben sich Geschwindigkeit, Beschleunigung und Steigung.
+Aus den GPS-Daten werden die Distanzen zwischen den einzelnen Punkten mit der
+Haversine-Formel berechnet. Daraus ergeben sich Geschwindigkeit, Beschleunigung und Steigung.
 
 Da GPS-Daten einzelne Ausreißer enthalten können, wird die berechnete Beschleunigung für die weitere Simulation auf einen plausiblen Bereich begrenzt (von `-3 m/s^2` bis `+3 m/s^2`). Der ursprüngliche Rohwert bleibt zusätzlich erhalten.
 
 ### Fahrzeugmodell
 
 Aus Geschwindigkeit, Beschleunigung und Steigung wird die notwendige Antriebskraft berechnet. Daraus werden anschließend Leistung, Drehmoment und Motorstrom bestimmt.
+
+Berücksichtigt werden:
+
+* Luftwiderstand `F_luft = 0.5 * rho * cW*A * v^2`
+* Hangabtriebskraft `F_steigung = m * g * sin(phi)`
+* Rollwiderstand `F_roll = c_rr * m * g * cos(phi)`
+* Beschleunigungskraft `F_beschl = m * a`
 
 Verwendete Fahrzeugparameter:
 
@@ -132,6 +165,7 @@ Fahrradmasse: 10 kg
 cW * A: 0.5625 m²
 Raddurchmesser: 27 inch
 Motorkonstante: 1.5 Nm/A
+Rollwiderstandsbeiwert: 0.008
 ```
 
 ### Akku-Simulation
@@ -152,6 +186,23 @@ Zunächst wurde das Modell mit einer Akkukapazität von `10 Ah` getestet. Diese 
 Für die weitere Simulation wurde daher eine größere Akkukapazität von `35 Ah` gewählt. Dadurch bleibt bei beiden Akkutypen eine ausreichende Reserve erhalten und die Entwicklung des Ladezustands über die gesamte Fahrt kann sinnvoll dargestellt werden.
 
 Die beiden simulierten Akkutypen LiPo und NMC verwenden dieselbe Kapazität und denselben Start-Ladezustand, unterscheiden sich jedoch durch ihre Spannungskennlinien und ihren Innenwiderstand. Dadurch ergeben sich unterschiedliche Spannungs- und Ladezustandsverläufe.
+
+## Ergebnisse der Fahrt
+
+Die wichtigsten Kennwerte der simulierten Fahrt:
+
+```text
+Zurückgelegte Strecke: 94.27 km
+Benötigte Zeit: 4.55 h
+Durchschnittsgeschwindigkeit: 20.73 km/h
+Maximale Geschwindigkeit: 48.77 km/h
+Höhenmeter Anstieg: 1096 m
+Höhenmeter Abstieg: 1097 m
+Maximale Leistung: 2703 W
+Maximaler Motorstrom: 64.58 A
+End-Ladezustand LiPo: 48.91 %
+End-Ladezustand NMC: 47.18 %
+```
 
 ## Logging
 
@@ -176,15 +227,153 @@ Beim Ausführen des Programms werden zentrale Kennwerte in die log-Datei geschri
 * benötigte Zeit
 * Höhenmeter im Anstieg und Abstieg
 
-Zusätzlich werden Diagramme erzeugt und angezeigt (jeweils in Abhängigkeit der Strecke):
+## Fehlerbehandlung
 
-* Höhenprofil
-* Geschwindigkeitsprofil
-* Leistungsprofil
-* Ladezustand der Akkus
-* Akkuspannung der Akkus
-* interaktive Routenkarte (results/route_karte.html, im Browser zu öffnen)
+Die Simulation ist an mehreren Stellen gegen ungültige Werte abgesichert:
+
+* Der Ladezustand kann nicht unter `0 %` oder über `100 %` fallen.
+* Eine Akkukapazität von `0` oder kleiner wird abgelehnt.
+* Negative Zeitschritte werden abgelehnt.
+* Fehlende oder ungültige Werte in der CSV-Datei führen zu einer aussagekräftigen Fehlermeldung.
+* Zeitschritte von `0` werden abgefangen, damit es keine Division durch null gibt.
+* Die API-Aufrufe (Geocoding, Wetterdaten) sind mit `try/except` abgesichert.
+
+## Umgesetzte Erweiterungen
+
+Zusätzlich zu den Minimalanforderungen wurden folgende Erweiterungen umgesetzt:
+
+### Diverse Diagramme
+
+Neben den Standard-Diagrammen wird ein farbcodiertes Höhenprofil erstellt, bei dem
+die Steigung farblich dargestellt wird (rot = bergauf, blau = bergab).
+Siehe `results/hoehenprofil_steigung.png`.
+
+Erzeugt werden insgesamt (jeweils über der Strecke):
+
+* Höhenprofil (`results/hoehenprofil.png`)
+* Höhenprofil mit Steigung (`results/hoehenprofil_steigung.png`)
+* Geschwindigkeitsprofil (`results/geschwindigkeit.png`)
+* Leistungsprofil (`results/leistung.png`)
+* Ladezustand der Akkus (`results/akku_soc.png`)
+* Akkuspannung der Akkus (`results/akku_spannung.png`)
+* interaktive Routenkarte (`results/route_karte.html`, im Browser zu öffnen)
+
+### Conventional Commits
+
+Alle Commit-Messages im Repository folgen dem Konzept der Conventional Commits
+(`feat`, `fix`, `docs`, `test`, `refactor`), um die Nachvollziehbarkeit der
+Entwicklung zu gewährleisten.
+
+### Routenkarte
+
+Die gefahrene Route wird mit dem Paket `folium` auf einer interaktiven
+OpenStreetMap-Karte dargestellt (`results/route_karte.html`). Die Marker für
+Start/Ziel und den höchsten Punkt sind mit den Ortsnamen aus dem Reverse
+Geocoding beschriftet.
+
+### Unit-Tests
+
+Für die Haversine-Distanzberechnung und die Akku-Klassen existieren 14 Unit-Tests
+(Modul `unittest`). Getestet wird unter anderem die geforderte Fehlerbehandlung:
+der Ladezustand kann nicht unter 0 % oder über 100 % fallen. Ausführen mit:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+### Parameterstudien
+
+Mit `src/parameter_study.py` wird der Einfluss von zwei Parametern auf den
+Akku-Ladezustand untersucht:
+
+* Fahrermasse (60 / 70 / 85 kg) → `results/parameterstudie_masse.png`
+* Luftwiderstandsbeiwert cW*A (0.4 / 0.5625 / 0.7) → `results/parameterstudie_cwa.png`
+
+Erwartungsgemäß entlädt sich der Akku bei höherer Masse und bei höherem
+Luftwiderstand schneller. Der Reifendurchmesser wurde bewusst nicht variiert, da
+er in diesem Modell nur Drehmoment und Motorstrom beeinflusst, nicht aber die
+Antriebsleistung und damit den Ladezustand.
+
+### UML-Klassendiagramm
+
+Die objektorientierte Struktur der Akku-Simulation (abstrakte Basisklasse
+`BatteryBase` mit den Unterklassen `LipoBattery` und `NmcBattery`) ist in
+[uml_class_diagramm.md](uml_class_diagramm.md) dokumentiert.
+
+### Luftdichte aus Temperatur und Höhe
+
+Die Luftdichte wird nicht pauschal angenommen, sondern für jeden Datenpunkt aus
+Höhe und Temperatur berechnet. Der Luftdruck folgt aus der barometrischen
+Höhenformel, die Dichte aus der idealen Gasgleichung:
+
+```text
+p = p0 * (1 - 0.0065 * h / 288.15)^5.255
+rho = p / (R_s * T)     mit R_s = 287.05 J/(kg*K)
+```
+
+Auf der simulierten Route liegt die Luftdichte zwischen etwa `1.05` und
+`1.12 kg/m³` und damit deutlich unter dem oft verwendeten Standardwert von
+`1.23 kg/m³`. Die Temperaturspalte der Eingangsdaten wird dadurch genutzt.
+
+### Rollwiderstand
+
+Das Fahrzeugmodell berücksichtigt den Rollwiderstand
+`F_roll = c_rr * m * g * cos(phi)` mit einem Rollwiderstandsbeiwert von `0.008`
+(typischer Wert für Fahrradreifen auf Asphalt). Der Rollwiderstand wirkt über die
+gesamte Fahrt und senkt den End-Ladezustand deutlich.
+
+### Simulation der Akkutemperatur
+
+`src/battery_temperature.py` enthält die Klasse `ThermalBattery`, die von
+`LipoBattery` erbt. Die Akkutemperatur steigt durch die ohmschen Verluste
+(`I² * R`) und sinkt durch Kühlung Richtung Umgebungstemperatur. Über die Fahrt
+erwärmt sich der Akku von `28 °C` auf etwa `31.4 °C`.
+Ergebnis: `results/akku_temperatur.png`.
+
+### Simulation eines Bremswiderstands
+
+`src/brake_resistance.py` bildet die Rekuperation beim Bergabfahren ab. Der Akku
+kann nur bis zu einem maximalen Ladestrom von `10 A` aufnehmen, die überschüssige
+Energie wird in einem Bremswiderstand dissipiert. Über die Fahrt werden etwa
+`131 kJ` rekuperiert und `19 kJ` im Bremswiderstand in Wärme umgewandelt.
+Ergebnis: `results/bremswiderstand.png`.
+
+### Reverse Geocoding
+
+`src/geocoding.py` wandelt die GPS-Koordinaten der markanten Punkte (Start, Ziel,
+höchster und tiefster Punkt) über die Nominatim-API von OpenStreetMap in
+Ortsnamen um. Die Ortsnamen werden zusätzlich als Beschriftung der Marker auf der
+Routenkarte dargestellt.
+
+### Wetterdaten und Windeinfluss
+
+`src/weather.py` holt über die Open-Meteo-Archiv-API die realen Winddaten für den
+Fahrttag und rechnet die Fahrt mit Windkomponente nach. Der Wind wirkt nur
+entlang der Fahrtrichtung, die über den Kurswinkel aus den GPS-Daten bestimmt
+wird. Da es sich um einen Rundkurs handelt, gleichen sich Gegen- und Rückenwind
+teilweise aus, der Effekt ist entsprechend moderat.
+Ergebnis: `results/wind_einfluss.png`.
+
+### Bestimmung der Himmelsrichtung
+
+Aus je zwei aufeinanderfolgenden GPS-Punkten wird der Kurswinkel (Bearing)
+berechnet und einer der acht Himmelsrichtungen (N, NO, O, SO, S, SW, W, NW)
+zugeordnet. Die Werte stehen in den Spalten `bearing` und `compass` und werden
+für die Windberechnung verwendet.
 
 ## Verwendete Pakete
 
-Die benötigten Python-Pakete sind in `requirements.txt` gespeichert.
+Die benötigten Python-Pakete sind in `requirements.txt` gespeichert:
+
+* `pandas` - Datenstrukturen und Auswertung
+* `matplotlib` - Diagramme
+* `numpy` - Interpolation der Akku-Kennlinien
+* `folium` - Routenkarte
+
+## Quellen
+
+* Kursunterlagen MCI-MECH-B-2-PRO1 (Vorlesungsfolien und Übungen)
+* Dokumentation der verwendeten Pakete: pandas, matplotlib, numpy, folium
+* Haversine-Formel: Kursunterlagen zum Abschlussprojekt
+* Nominatim (OpenStreetMap) für das Reverse Geocoding: https://nominatim.org
+* Open-Meteo für die historischen Wetterdaten: https://open-meteo.com
