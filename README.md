@@ -365,16 +365,18 @@ Nicht alle Modellparameter sind in der Aufgabenstellung vorgegeben. Für die
 Erweiterungen wurden folgende Werte als begründete Annahmen gewählt und im
 Code als Konstanten hinterlegt:
 
-## Verwendete Annahmen
-
-Einige Parameter der Erweiterungen sind in der Aufgabenstellung nicht vorgegeben und wurden daher selbst gewählt:
-
  Parameter | Wert 
- Rollwiderstandsbeiwert `c_rr`  0.008 
+ 
+ Rollwiderstandsbeiwert `c_rr` | 0.008 
+ 
  Wärmekapazität / Kühlkoeffizient des Akkus | 1200 J/K / 0.8 W/K 
+ 
  Umgebungstemperatur | 28 °C 
+ 
  Maximaler Ladestrom (Rekuperation) | 10 A 
+ 
  Akkukapazität | 35 Ah 
+ 
  Parameterstudien | 60/70/85 kg, cW*A 0.4/0.5625/0.7 
 
 Für den fiktiven Akku liegt kein Datenblatt vor, daher sind die thermischen
@@ -420,6 +422,8 @@ Standardformeln aus der Physik/Thermodynamik :
 * numpy: https://numpy.org/doc/
 * folium: https://python-visualization.github.io/folium/
 * unittest (Python-Standardbibliothek): https://docs.python.org/3/library/unittest.html
+
+(Zusätzliche werden Module aus der Python-Standartbibliothek verwendet Diese müssen nicht separat installiert werden.
 
 ### Werkzeuge
 
